@@ -1,5 +1,7 @@
 # ARCHITECT — Precision in Motion
 
+![Architect 3D Desk Lamp Preview](./preview.png)
+
 > An interactive 3D articulated architect desk lamp web experience featuring real-time forward kinematics, procedural warm lighting, and a luxury editorial UI built with **Three.js** and **Blender**.
 
 ---
