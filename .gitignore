@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+web/node_modules/
+
+# Production Builds
+dist/
+web/dist/
+
+# Blender backup & temp files
+*.blend1
+*.blend@
+__pycache__/
+*.pyc
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

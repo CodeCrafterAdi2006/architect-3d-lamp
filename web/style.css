@@ -1,0 +1,513 @@
+:root {
+  --bg-deep: #050507;
+  --bg-vignette: radial-gradient(circle at 55% 45%, #181512 0%, #0c0a08 50%, #040303 100%);
+  --amber-glow: #ffaa33;
+  --amber-warm: #ffb85c;
+  --amber-subtle: rgba(255, 170, 51, 0.15);
+  --text-primary: #f2ede4;
+  --text-muted: #8e877e;
+  --text-dim: #5c564f;
+  --glass-bg: rgba(18, 16, 15, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 170, 51, 0.35);
+  --font-serif: 'Cinzel', serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-vignette);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#webgl-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* -------------------------------------------------------------------------- */
+/* LOADING SCREEN                                                             */
+/* -------------------------------------------------------------------------- */
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #060505;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+}
+
+.loader-overlay.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.spinner {
+  width: 44px;
+  height: 44px;
+  border: 2px solid rgba(255, 170, 51, 0.12);
+  border-top-color: var(--amber-glow);
+  border-radius: 50%;
+  animation: spin 1s cubic-bezier(0.5, 0.1, 0.5, 0.9) infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loader-text {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  color: var(--amber-warm);
+  font-family: var(--font-mono);
+}
+
+/* -------------------------------------------------------------------------- */
+/* EDITORIAL HUD OVERLAY                                                      */
+/* -------------------------------------------------------------------------- */
+.hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 10;
+  padding: 40px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Top-Right Navigation */
+.top-nav {
+  position: absolute;
+  top: 40px;
+  right: 48px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  pointer-events: auto;
+}
+
+.nav-link {
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.80rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 8px 12px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.menu-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.menu-btn:hover {
+  border-color: var(--glass-border-hover);
+  color: var(--text-primary);
+  box-shadow: 0 0 16px var(--amber-subtle);
+}
+
+/* Left Brand & Gesture Legend */
+.sidebar-left {
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+  pointer-events: auto;
+}
+
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.brand-title {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  font-weight: 400;
+  letter-spacing: 0.32em;
+  color: var(--text-primary);
+  text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+  line-height: 1.1;
+}
+
+.brand-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--amber-warm);
+}
+
+.brand-divider {
+  width: 32px;
+  height: 2px;
+  background: var(--amber-glow);
+  margin: 12px 0 8px 0;
+  opacity: 0.8;
+}
+
+.brand-desc {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+/* Vertical Timeline Gesture Legend */
+.gesture-legend {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding-left: 2px;
+}
+
+.legend-track {
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 17px;
+  width: 1px;
+  background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.12), rgba(255,255,255,0.12) 4px, transparent 4px, transparent 8px);
+  z-index: 1;
+}
+
+.legend-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  z-index: 2;
+}
+
+.legend-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #0d0c0a;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.legend-icon {
+  width: 15px;
+  height: 15px;
+}
+
+.legend-item:hover .legend-icon-wrap {
+  border-color: var(--amber-glow);
+  color: var(--amber-warm);
+  box-shadow: 0 0 12px var(--amber-subtle);
+}
+
+.legend-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.meta-title {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--text-primary);
+}
+
+.meta-sub {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.bottom-tip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+.sparkle {
+  color: var(--amber-warm);
+  font-size: 0.9rem;
+}
+
+/* -------------------------------------------------------------------------- */
+/* BOTTOM-RIGHT TACTILE CONTROL CAPSULE                                       */
+/* -------------------------------------------------------------------------- */
+.control-capsule {
+  position: absolute;
+  bottom: 40px;
+  right: 48px;
+  display: flex;
+  align-items: center;
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 8px 12px;
+  pointer-events: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  transition: border-color 0.3s ease;
+}
+
+.control-capsule:hover {
+  border-color: var(--glass-border-hover);
+}
+
+.capsule-btn {
+  background: transparent;
+  border: none;
+  padding: 10px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.capsule-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  color: var(--text-dim);
+}
+
+.capsule-value-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.state-text {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.capsule-btn.active .state-text {
+  color: var(--text-primary);
+}
+
+.led-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #333;
+  transition: all 0.3s ease;
+}
+
+.capsule-btn.active .led-dot {
+  background: var(--amber-glow);
+  box-shadow: 0 0 10px var(--amber-glow), 0 0 20px var(--amber-warm);
+}
+
+.wave-icon {
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.capsule-btn.active .wave-icon {
+  color: var(--amber-warm);
+}
+
+.capsule-divider {
+  width: 1px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* -------------------------------------------------------------------------- */
+/* ABOUT / SPECS MODAL                                                        */
+/* -------------------------------------------------------------------------- */
+.modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 1;
+  visibility: visible;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: auto;
+}
+
+.modal-backdrop.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-card {
+  width: 90%;
+  max-width: 520px;
+  background: #110f0d;
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 36px 40px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255,170,51,0.08);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.modal-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  letter-spacing: 0.18em;
+  color: var(--text-primary);
+}
+
+.modal-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+  color: var(--text-primary);
+}
+
+.modal-p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin-bottom: 28px;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.spec-cell {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.spec-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  color: var(--amber-warm);
+}
+
+.spec-val {
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+/* -------------------------------------------------------------------------- */
+/* RESPONSIVE DESIGN                                                          */
+/* -------------------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .hud-overlay {
+    padding: 24px;
+  }
+  .sidebar-left {
+    max-width: 280px;
+    gap: 20px;
+  }
+  .brand-title {
+    font-size: 1.6rem;
+  }
+  .gesture-legend {
+    gap: 14px;
+  }
+  .control-capsule {
+    bottom: 24px;
+    right: 24px;
+  }
+}

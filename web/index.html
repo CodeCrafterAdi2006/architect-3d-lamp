@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARCHITECT — Precision in Motion</title>
+  <meta name="description" content="Physically interact with the 3D articulated architect desk lamp. Control the light, reveal the world.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- 3D Canvas Container -->
+  <div id="canvas-container">
+    <canvas id="webgl-canvas"></canvas>
+  </div>
+
+  <!-- Loading Screen Overlay -->
+  <div id="loader" class="loader-overlay">
+    <div class="spinner"></div>
+    <p class="loader-text">INITIALIZING STUDIO SCENE...</p>
+  </div>
+
+  <!-- Main Editorial HUD Overlay -->
+  <div class="hud-overlay">
+    
+    <!-- Top-Right Navigation -->
+    <header class="top-nav">
+      <a id="btn-about" href="https://aditya1952-portfolio.vercel.app/" target="_blank" rel="noopener noreferrer" class="nav-link">ABOUT</a>
+      <button id="btn-menu" class="menu-btn" aria-label="Open specs">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <line x1="4" y1="8" x2="20" y2="8"></line>
+          <line x1="4" y1="16" x2="20" y2="16"></line>
+        </svg>
+      </button>
+    </header>
+
+    <!-- Left Brand & Gesture Legend -->
+    <aside class="sidebar-left">
+      <div class="brand-block">
+        <h1 class="brand-title">ARCHITECT</h1>
+        <p class="brand-subtitle">PRECISION IN MOTION</p>
+        <div class="brand-divider"></div>
+        <p class="brand-desc">Physically interact with the lamp.<br>Control the light. Reveal the world.</p>
+      </div>
+
+      <!-- Vertical Timeline Gesture Legend -->
+      <nav class="gesture-legend">
+        <div class="legend-track"></div>
+        
+        <div class="legend-item">
+          <div class="legend-icon-wrap">
+            <svg class="legend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="6" y="3" width="12" height="18" rx="6"></rect>
+              <line x1="12" y1="7" x2="12" y2="10"></line>
+            </svg>
+          </div>
+          <div class="legend-meta">
+            <span class="meta-title">DRAG LAMP</span>
+            <span class="meta-sub">Move & Articulate</span>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-icon-wrap">
+            <svg class="legend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="8"></circle>
+              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+              <path d="M2 12h20"></path>
+            </svg>
+          </div>
+          <div class="legend-meta">
+            <span class="meta-title">ORBIT CAMERA</span>
+            <span class="meta-sub">Look Around</span>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-icon-wrap">
+            <svg class="legend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="7" y="4" width="10" height="16" rx="5"></rect>
+              <circle cx="12" cy="8" r="1.2" fill="currentColor"></circle>
+            </svg>
+          </div>
+          <div class="legend-meta">
+            <span class="meta-title">SCROLL</span>
+            <span class="meta-sub">Zoom In / Out</span>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-icon-wrap">
+            <svg class="legend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M9 18h6"></path>
+              <path d="M10 22h4"></path>
+              <path d="M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z"></path>
+            </svg>
+          </div>
+          <div class="legend-meta">
+            <span class="meta-title">CLICK BULB</span>
+            <span class="meta-sub">Power On / Off</span>
+          </div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-icon-wrap">
+            <svg class="legend-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M3 12h3l3-7 4 14 3-7h5"></path>
+            </svg>
+          </div>
+          <div class="legend-meta">
+            <span class="meta-title">TOGGLE FLICKER</span>
+            <span class="meta-sub">Subtle Realism</span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Bottom Tip -->
+      <div class="bottom-tip">
+        <span class="sparkle">✦</span>
+        <span>Tip: The world reveals itself where light falls.</span>
+      </div>
+    </aside>
+
+    <!-- Bottom-Right Tactile Control Capsule -->
+    <div class="control-capsule">
+      <button id="btn-toggle-power" class="capsule-btn active" title="Toggle Lamp Light Power">
+        <span class="capsule-label">POWER</span>
+        <span class="capsule-value-row">
+          <span class="state-text">ON</span>
+          <span class="led-dot"></span>
+        </span>
+      </button>
+      
+      <div class="capsule-divider"></div>
+
+      <button id="btn-toggle-flicker" class="capsule-btn active" title="Toggle Filament Flicker">
+        <span class="capsule-label">FLICKER</span>
+        <span class="capsule-value-row">
+          <span class="state-text">ON</span>
+          <span class="wave-icon">
+            <svg viewBox="0 0 24 12" width="18" height="10" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 6 Q 5 0, 8 6 T 15 6 T 23 6"></path>
+            </svg>
+          </span>
+        </span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- About / Specs Modal Backdrop -->
+  <div id="about-modal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title">ARCHITECT DESK LAMP</h2>
+        <button id="btn-close-modal" class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-p">An articulated spring-balanced cantilever task lamp designed with mathematical precision and procedural lighting.</p>
+        <div class="specs-grid">
+          <div class="spec-cell">
+            <span class="spec-label">JOINTS</span>
+            <span class="spec-val">4-DOF Articulation</span>
+          </div>
+          <div class="spec-cell">
+            <span class="spec-label">MATERIALS</span>
+            <span class="spec-val">Dark Gunmetal & Brushed Steel</span>
+          </div>
+          <div class="spec-cell">
+            <span class="spec-label">LIGHTING</span>
+            <span class="spec-val">2700K Warm Incandescent</span>
+          </div>
+          <div class="spec-cell">
+            <span class="spec-label">KINEMATICS</span>
+            <span class="spec-val">Hierarchical Inverse-FK Tracking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
