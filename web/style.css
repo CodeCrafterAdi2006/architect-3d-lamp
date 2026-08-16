@@ -490,8 +490,15 @@ html, body {
 }
 
 /* -------------------------------------------------------------------------- */
-/* RESPONSIVE DESIGN                                                          */
+/* RESPONSIVE DESIGN & MOBILE OPTIMIZATIONS                                   */
 /* -------------------------------------------------------------------------- */
+#webgl-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
 @media (max-width: 900px) {
   .hud-overlay {
     padding: 24px;
@@ -509,5 +516,68 @@ html, body {
   .control-capsule {
     bottom: 24px;
     right: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hud-overlay {
+    padding: 18px 20px;
+  }
+  .top-nav {
+    top: 18px;
+    right: 20px;
+    gap: 12px;
+  }
+  .sidebar-left {
+    max-width: 240px;
+    gap: 14px;
+  }
+  .brand-title {
+    font-size: 1.35rem;
+    letter-spacing: 0.22em;
+  }
+  .brand-desc {
+    display: none;
+  }
+  .brand-divider {
+    margin: 6px 0;
+  }
+  .gesture-legend {
+    gap: 10px;
+  }
+  .legend-item {
+    gap: 12px;
+  }
+  .legend-icon-wrap {
+    width: 26px;
+    height: 26px;
+  }
+  .legend-icon {
+    width: 13px;
+    height: 13px;
+  }
+  .meta-title {
+    font-size: 0.65rem;
+  }
+  .meta-sub {
+    font-size: 0.70rem;
+  }
+  .bottom-tip {
+    display: none;
+  }
+  .control-capsule {
+    bottom: 18px;
+    right: 20px;
+    padding: 4px 8px;
+  }
+  .capsule-btn {
+    padding: 8px 12px;
+  }
+  .modal-card {
+    padding: 24px 20px;
+  }
+  .specs-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 }
