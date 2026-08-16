@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import deskLampUrl from './assets/desk_lamp.glb?url';
 
 // -----------------------------------------------------------------------------
 // 1. SETUP CANVAS, RENDERER & SCENE
@@ -429,7 +430,7 @@ function classifyPart(name) {
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.load(
-  './assets/desk_lamp.glb?v=' + Date.now(),
+  deskLampUrl || './assets/desk_lamp.glb',
   (gltf) => {
     lampModel = gltf.scene;
 
